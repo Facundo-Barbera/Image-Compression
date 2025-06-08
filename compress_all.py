@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from src.image import Image
 
-# Define file extensions
 RAW_EXTS = {
 	".arw",
 	".cr2",
