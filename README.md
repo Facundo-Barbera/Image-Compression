@@ -18,3 +18,7 @@ Please some images in the `images/raw` directory.
 ```bash
 python main.py
 ```
+
+## Additional Information
+
+The testing images were provided by `Sergio Aboytes Phtography`.
