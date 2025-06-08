@@ -1,59 +1,60 @@
 import os
 from pathlib import Path
+from src.image import Image
 
-from src.compress_utility import (
-    load_image,
-    fast_fourier_transform,
-    mask,
-    inverse_fast_fourier_transform,
-    save_image
-)
-
+# Define file extensions
 RAW_EXTS = {
-    ".arw",
-    ".cr2",
-    ".nef",
-    ".dng",
-    ".raf",
-    ".rw2"
+	".arw",
+	".cr2",
+	".nef",
+	".dng",
+	".raf",
+	".rw2"
 }
 IMAGE_EXTS = RAW_EXTS | {
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".tif",
-    ".tiff",
-    ".bmp",
-    ".gif",
-    ".webp",
+	".jpg",
+	".jpeg",
+	".png",
+	".tif",
+	".tiff",
+	".bmp",
+	".gif",
+	".webp",
 }
 
-def compress_image(input_path, output_path, compression_ratio=0.01):
-    image_array = load_image(input_path)
-    fourier_transformed = fast_fourier_transform(image_array)
-    compressed = mask(fourier_transformed, ratio=compression_ratio)
-    compressed_image = inverse_fast_fourier_transform(compressed)
-    save_image(compressed_image, output_path)
-    print(f"Compressed image saved to: {output_path}")
+
+def compress_with_image_class(input_path, output_path, compression_ratio=0.1, greyscale=False):
+	img = Image(input_path)
+
+	img.compress(output_path, ratio=compression_ratio, greyscale=greyscale)
+
+	print(f"Compressed image saved to: {output_path}")
+
 
 if __name__ == "__main__":
-    input_dir = "images/raw"
-    output_dir = "images/compressed"
-    os.makedirs(output_dir, exist_ok=True)
+	input_dir = "images/raw"
+	output_dir = "images/compressed"
+	output_color_dir = "images/compressed_color"
 
-    for file in Path(input_dir).iterdir():
-        if not file.is_file():
-            continue
-        if file.suffix.lower() not in IMAGE_EXTS:
-            continue
+	os.makedirs(output_dir, exist_ok=True)
+	os.makedirs(output_color_dir, exist_ok=True)
 
-        out_suffix = '.jpg' if file.suffix.lower() in RAW_EXTS else file.suffix.lower()
-        out_file = f"{output_dir}/{file.stem}_compressed{out_suffix}"
+	for file in Path(input_dir).iterdir():
+		if not file.is_file():
+			continue
+		if file.suffix.lower() not in IMAGE_EXTS:
+			continue
 
-        try:
-            compress_image(str(file), str(out_file), compression_ratio=0.01)
-        except Exception as e:
-            print(f"Error processing {file.name}: {e}")
-            continue
+		out_suffix = '.jpg' if file.suffix.lower() in RAW_EXTS else file.suffix.lower()
+		out_file = f"{output_dir}/{file.stem}_compressed{out_suffix}"
+		out_file_color = f"{output_color_dir}/{file.stem}_compressed{out_suffix}"
 
-    print("Test completed successfully!")
+		try:
+			compress_with_image_class(str(file), str(out_file), compression_ratio=0.1, greyscale=True)
+
+			compress_with_image_class(str(file), str(out_file_color), compression_ratio=0.1, greyscale=False)
+		except Exception as e:
+			print(f"Error processing {file.name}: {e}")
+			continue
+
+	print("Test completed successfully!")
