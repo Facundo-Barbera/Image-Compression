@@ -38,7 +38,7 @@ def fast_fourier_transform(image_array: np.ndarray):
 	return fourier_transformed_shifted
 
 
-def mask(fourier_transformed: np.ndarray, ratio: float = 0.1):
+def mask(fourier_transformed: np.ndarray, ratio: float = 0.5):
 	magnitude = np.abs(fourier_transformed)
 	threshold = np.percentile(magnitude, 100 * (1 - ratio))
 
