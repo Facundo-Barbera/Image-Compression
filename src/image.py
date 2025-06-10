@@ -1,5 +1,6 @@
 import numpy as np
 import rawpy
+import os
 from PIL import (
     Image as PILImage,
     UnidentifiedImageError
@@ -94,7 +95,19 @@ class Image:
     
     def _save_image(self, image_array, output_path):
         img = PILImage.fromarray(image_array)
-        img.save(output_path)
+
+        ext = os.path.splitext(output_path)[1].lower()
+        save_kwargs = {}
+
+        if ext in ('.jpg', '.jpeg'):
+            # JPEG: set maximum quality, no subsampling
+            save_kwargs['quality']     = 100
+            save_kwargs['subsampling'] = 0
+        elif ext == '.png':
+            # PNG: no compression
+            save_kwargs['compress_level'] = 0
+
+        img.save(output_path, **save_kwargs)
     
     def compress(self, output_path, ratio=0.5, greyscale=False):
         if self.image_array is None or greyscale != (len(self.image_array.shape) == 2):

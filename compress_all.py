@@ -49,9 +49,9 @@ if __name__ == "__main__":
 		out_file_color = f"{output_color_dir}/{file.stem}_compressed{out_suffix}"
 
 		try:
-			compress_with_image_class(str(file), str(out_file), compression_ratio=0.1, greyscale=True)
+			compress_with_image_class(str(file), str(out_file), compression_ratio=0.01, greyscale=True)
 
-			compress_with_image_class(str(file), str(out_file_color), compression_ratio=0.1, greyscale=False)
+			compress_with_image_class(str(file), str(out_file_color), compression_ratio=0.01, greyscale=False)
 		except Exception as e:
 			print(f"Error processing {file.name}: {e}")
 			continue
