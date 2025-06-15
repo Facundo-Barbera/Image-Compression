@@ -2,11 +2,11 @@
 
 \subsection{Entorno y herramientas}
 
-El proceso de experimentación se desarrolló usando Python 3.12, usando un entorno virtual (venv) para poder reproducir el proyecto facilmente. Para el computo numérico y las trasnformadas se uso NumPy (v2.3.0). La lectura y escritura de imágenes utiliza Pillow (v11.2.1) para formatos estándar y rawpy (v0.25.0) para archivos RAW@.
+El proceso de experimentación se desarrolló usando Python 3.12, usando un entorno virtual (venv) para poder reproducir el proyecto fácilmente. Para el cómputo numérico y las transformadas se usó NumPy (v2.3.0). La lectura y escritura de imágenes utiliza Pillow (v11.2.1) para formatos estándar y rawpy (v0.25.0) para archivos RAW@.
 
 \subsection{Proceso de compresión}
 
-En esta sección se busca descrbir el flujo completo de compresión.
+En esta sección se busca describir el flujo completo de compresión.
 Se implementa en una clase \texttt{Image}, definida en \texttt{image.py}, integrando la parte programática y matemática.
 
 \subsubsection{Carga de la imagen}
@@ -27,7 +27,7 @@ def _load_image(self, image_path, greyscale=False):
 
 \subsubsection{Transformada de Fourier en 2D}
 
-Se aplica la FFT bidimensional y centramos el espectro para revelar las compontentes de frecuencia (se usa numpy para estos procesos).
+Se aplica la FFT bidimensional y centramos el espectro para revelar las componentes de frecuencia (se usa numpy para estos procesos).
 
 \begin{lstlisting}[language=Python, caption={Método \_fast\_fourier\_transform}, label={lst:fft2d}]
 def _fast_fourier_transform(self, image_array):
@@ -35,10 +35,7 @@ def _fast_fourier_transform(self, image_array):
     return np.fft.fftshift(ft)
 \end{lstlisting}
 
-La FFT 2D parte de la idea de la FFT 1D, la cual normalmente se usa para descomponer señales unidimensionales en una suma de ondas sinusoidales de distintas freuencias y amplitudes. En este caso nuestra `onda` es una función bidimensional \(f(x,y)\) que corresponde a la imagen.
-La FFT 2D procesa filas y columnas simultáneamente y genera un mapa bidimensional de las frecuencias horizontales y verticales.
-
-\newpage
+La FFT 2D parte de la idea de la FFT 1D, la cual normalmente se usa para descomponer señales unidimensionales en una suma de ondas sinusoidales de distintas frecuencias y amplitudes. En este caso nuestra `onda' es una función bidimensional \(f(x,y)\) que corresponde a la imagen.
 
 \subsubsection{Enmascaramiento del espectro}
 
@@ -58,7 +55,7 @@ img_back = np.fft.ifft2(np.fft.ifftshift(fourier_compressed)).real
 img_back = np.clip(img_back, 0, 255).astype(np.uint8)
 \end{lstlisting}
 
-Se reconstruye la imagen utilizando IFFT2D, es decir la transformada inversa despues de haber recortado los valores fuera de rango.
+Se reconstruye la imagen utilizando IFFT2D, es decir la transformada inversa después de haber recortado los valores fuera de rango.
 
 \subsubsection{Guardado del resultado}
 

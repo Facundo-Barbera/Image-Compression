@@ -1,1 +1,8 @@
 \section{Conclusiones}
+
+Este reporte presentó un método de compresión de imágenes con base en la Transformada Discreta de Fourier en dos dimensiones (FFT 2D). Los resultados de la experimentación demuestran que la técnica implementada permite alcanzar tasas de compresión considerables, lo cual es aún más notable en imágenes comprimidas con color, gracias a las redundancias de los canales cromáticos. A pesar de la eficiencia que tiene el modelo, este también puede tener sus limitaciones, como producir ruido visible en zonas con mucho detalles o texturas granuladas, y un umbral fijo no adapta automáticamente a variaciones locales de contenido (es decir, ajuste de enmascaramiento por región de imagen).
+
+\subsection{Nota de Facundo}
+
+Considero que este reporte y, en general, el proceso de experimentación fue bastante satisfactorio.
+El desarrollar el código que implementa un método matemático para hacer algo real y útil fue realmente entretenido. Aplicar las transformadas de Fourier para algo que no sea simplemente resolver un problema matemático cualquiera realmente ayuda a centrar más la utilidad del concepto. Desde un inicio me pareció increíble como es que las series y transformada de Fourier logran capturar elementos `escondidos`' en las cosas y creo que este conocimiento me será realmente útil en el futuro para entender cosas como redes neuronales.
