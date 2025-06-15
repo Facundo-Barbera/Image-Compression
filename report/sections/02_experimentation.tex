@@ -1,0 +1,70 @@
+\section{Experimentación}
+
+\subsection{Entorno y herramientas}
+
+El proceso de experimentación se desarrolló usando Python 3.12, usando un entorno virtual (venv) para poder reproducir el proyecto facilmente. Para el computo numérico y las trasnformadas se uso NumPy (v2.3.0). La lectura y escritura de imágenes utiliza Pillow (v11.2.1) para formatos estándar y rawpy (v0.25.0) para archivos RAW@.
+
+\subsection{Proceso de compresión}
+
+En esta sección se busca descrbir el flujo completo de compresión.
+Se implementa en una clase \texttt{Image}, definida en \texttt{image.py}, integrando la parte programática y matemática.
+
+\subsubsection{Carga de la imagen}
+
+Se abre un archivo (RAW, JPEG, u otros tipos) usando Pillow o rawpy, en caso de que la imagen sea de tipo RAW y se convierte en un array de NumPy de tipo Float.
+
+\begin{lstlisting}[language=Python, caption={Método \_load\_image}, label={lst:load_image}]
+def _load_image(self, image_path, greyscale=False):
+    try:
+        img = PILImage.open(image_path)
+    except (UnidentifiedImageError, OSError):
+        with rawpy.imread(image_path) as raw:
+            rgb = raw.postprocess(no_auto_bright=True, output_bps=8)
+            img = PILImage.fromarray(rgb)
+    img = img.convert('L' if greyscale else 'RGB')
+    return np.array(img, dtype=float)
+\end{lstlisting}
+
+\subsubsection{Transformada de Fourier en 2D}
+
+Se aplica la FFT bidimensional y centramos el espectro para revelar las compontentes de frecuencia (se usa numpy para estos procesos).
+
+\begin{lstlisting}[language=Python, caption={Método \_fast\_fourier\_transform}, label={lst:fft2d}]
+def _fast_fourier_transform(self, image_array):
+    ft = np.fft.fft2(image_array, axes=(0,1))
+    return np.fft.fftshift(ft)
+\end{lstlisting}
+
+La FFT 2D parte de la idea de la FFT 1D, la cual normalmente se usa para descomponer señales unidimensionales en una suma de ondas sinusoidales de distintas freuencias y amplitudes. En este caso nuestra `onda` es una función bidimensional \(f(x,y)\) que corresponde a la imagen.
+La FFT 2D procesa filas y columnas simultáneamente y genera un mapa bidimensional de las frecuencias horizontales y verticales.
+
+\newpage
+
+\subsubsection{Enmascaramiento del espectro}
+
+\begin{lstlisting}[language=Python, caption={Enmascaramiento del espectro}, label={lst:masking}]
+magnitude = np.abs(fourier_transformed)
+threshold = np.percentile(magnitude, 100 * (1 - ratio))
+mask = magnitude > threshold
+fourier_compressed = fourier_transformed * mask
+\end{lstlisting}
+
+Al aplicar un umbral sobre las magnitudes de este espectro, conservamos únicamente los componentes más importantes. Este umbral se calibró con un ratio de pérdida de 0.1, lo que significa que se descarta hasta el 90\% de las características menos relevantes durante la compresión, sin afectar significativamente la calidad visual.
+
+\subsubsection{Transformada inversa}
+
+\begin{lstlisting}[language=Python, caption={Transformada inversa}, label={lst:inverse_transform}]
+img_back = np.fft.ifft2(np.fft.ifftshift(fourier_compressed)).real
+img_back = np.clip(img_back, 0, 255).astype(np.uint8)
+\end{lstlisting}
+
+Se reconstruye la imagen utilizando IFFT2D, es decir la transformada inversa despues de haber recortado los valores fuera de rango.
+
+\subsubsection{Guardado del resultado}
+
+\begin{lstlisting}[language=Python, caption={Guardado de la imagen comprimida}, label={lst:save_image}]
+img = PILImage.fromarray(img_back)
+img.save(output_path, quality=100, subsampling=0)
+\end{lstlisting}
+
+Se utiliza Pillow para exportar la imagen comprimida con calidad máxima, evitando pérdidas adicionales de compresión.

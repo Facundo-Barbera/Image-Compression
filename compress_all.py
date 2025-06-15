@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from src.image import Image
+from src import Image
 
 RAW_EXTS = {
 	".arw",

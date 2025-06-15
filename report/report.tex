@@ -1,0 +1,66 @@
+\documentclass[aps,prl,preprint,superscriptaddress]{revtex4-1}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{gray},
+  breaklines=true,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  aboveskip=0pt,
+  belowskip=0pt,
+  lineskip=-0.5ex,
+}
+\lstset{style=pythonstyle}
+
+\begin{document}
+
+    % Titulo y Abstracto
+    \input{sections/00_title.tex}
+    \input{sections/00_abstract.tex}
+
+    \maketitle
+
+    % Intoducción
+    \input{sections/01_introduction.tex}
+
+    \newpage
+    % Experimentación
+    \input{sections/02_experimentation.tex}
+
+    \newpage
+    % Comparación
+    \input{sections/03_comparison.tex}
+
+    \newpage
+    % Conclusiones
+    \input{sections/04_conclussion.tex}
+
+    \newpage
+    % Referencias
+    \section{Referencias}
+
+    \nocite{*}
+    \bibliographystyle{apsrev4-2}
+    \bibliography{sources/references}
+
+    \newpage
+    \appendix
+    
+    \section{Anexo: Código Python}
+    \lstinputlisting[caption={Código de compresión de imagen en Python},label={lst:imagecompression}]{../src/image.py}
+
+    \newpage
+    \lstinputlisting[caption={Código para procesar todas las imagenes},label={lst:imagecompressionstartup}]{../compress_all.py}
+
+\end{document}
